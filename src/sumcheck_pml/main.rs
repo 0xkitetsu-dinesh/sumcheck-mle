@@ -1,0 +1,72 @@
+use ark_ff::{
+	fields::Fp64,
+	fields::{MontBackend, MontConfig},
+	One, PrimeField,
+};
+use ark_poly::{
+    multivariate::{self, Term},
+    DenseMVPolynomial,
+};
+use ark_std::test_rng;
+
+pub mod prover;
+pub mod verifier;
+pub mod poly;
+
+use prover::*;
+use verifier::*;
+
+fn main(){
+    #[derive(MontConfig)]
+    #[modulus = "97"]
+    #[generator = "5"]
+    struct FrConfig;
+
+    type Fp97 = Fp64<MontBackend<FrConfig, 1>>;
+
+	let rng = &mut test_rng();
+        
+    let g = vec![
+        // 24 * x_0   +   15 * x_0 * x_1   +   35 * x_1
+        multivariate::SparsePolynomial::from_coefficients_slice( 2 ,
+            &[
+                (Fp97::from_bigint(24u32.into()).unwrap(),multivariate::SparseTerm::new(vec![(0, 1)]),),
+                (Fp97::from_bigint(15u32.into()).unwrap(),multivariate::SparseTerm::new(vec![(0, 1), (1, 1)]),),
+                (Fp97::from_bigint(35u32.into()).unwrap(),multivariate::SparseTerm::new(vec![(1, 1)]),),
+            ]),
+        // 17*x0 + 30*x0*x1 + 33*x1,
+        multivariate::SparsePolynomial::from_coefficients_slice( 2 ,
+            &[
+                (Fp97::from_bigint(17u32.into()).unwrap(),multivariate::SparseTerm::new(vec![(0, 1)]),),
+                (Fp97::from_bigint(30u32.into()).unwrap(),multivariate::SparseTerm::new(vec![(0, 1), (1, 1)]),),
+                (Fp97::from_bigint(33u32.into()).unwrap(),multivariate::SparseTerm::new(vec![(1, 1)]),),
+            ]),
+	];
+	println!("=============== Given Polynomial ===================");
+	println!("{:?}",g.clone());
+	println!("==========================================================");
+
+    let mut prover = Prover::new(g.clone());
+    let mut verifier = Verifier::new(Some(g.clone()),prover.claim());
+
+    println!("prover.claim => {:?}",prover.claim());
+
+    let mut r_j = Fp97::one();
+
+    for j in 0..prover.num_vars() {
+		let p = prover.round(r_j, j);
+        println!("Round-{} p => {:?}",j,&p);
+		let verifier_res = verifier.round(p, rng).unwrap();
+		match verifier_res {
+			VerifierRoundResult::JthRound(r) => {
+                println!("Round-{} V's r => {:?} expect => {:?}",j,&r,verifier.expect);
+				r_j = r;
+			}
+			VerifierRoundResult::FinalRound(res) => {
+				assert!(res);
+				break;
+			}
+		}
+	}
+
+}
