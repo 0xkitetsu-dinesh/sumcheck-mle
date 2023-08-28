@@ -1,5 +1,5 @@
 use ark_ff::Field;
-use crate::poly::*;
+use crate::sumcheck_ml::poly::*;
 use ark_std::{rand::Rng};
 
 pub trait RngF<F> {

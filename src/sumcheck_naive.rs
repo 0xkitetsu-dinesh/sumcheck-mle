@@ -340,7 +340,8 @@ impl<F: Field, P: SumCheckPolynomial<F>> Verifier<F, P> {
     }
 }
 
-fn main(){
+#[test]
+fn test_normal_poly(){
 	// #[derive(MontConfig)]
     // #[modulus = "71"]
     // #[generator = "7"]
@@ -453,3 +454,18 @@ fn main(){
 		}
 	}
 }
+
+
+pub fn prove_bench<F: Field, P: SumCheckPolynomial<F>>(g:P){
+    let mut prover = Prover::new(g);
+    // let mut verifier = Verifier::new(Some(g),prover.claim());
+    
+    let rng = &mut test_rng();
+    let mut r_j = F::one();
+
+    for j in 0..prover.num_vars() {
+        let p = prover.round(r_j, j);
+        r_j = rng.draw();
+    }
+}
+fn main(){}

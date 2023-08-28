@@ -1,19 +1,15 @@
 [package]
-name = "sum-check"
+name = "sumcheck_mle"
 version = "0.1.0"
 edition = "2021"
 
 [[bin]]
 name = "sc"
-path = "src/sumcheck.rs"
+path = "src/sumcheck_naive.rs"
 
-[[bin]]
-name = "ml"
-path = "src/sumcheck_ml/main.rs"
-
-[[bin]]
-name = "pml"
-path = "src/sumcheck_pml/main.rs"
+[[bench]]
+name = "sc_bench"
+harness = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -22,5 +18,6 @@ ark-ff = "0.4"
 ark-poly = "0.4"
 ark-std = "0.4" 
 bitvec = "1.0.0"
+criterion = "0.5.1"
 polynomial = "0.2.5"
 thiserror = "1.0.31"

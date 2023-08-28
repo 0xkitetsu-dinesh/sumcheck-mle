@@ -1,5 +1,5 @@
 use ark_ff::Field;
-use crate::poly::*;
+use crate::sumcheck_pml::poly::*;
 // The state of the Prover.
 pub struct Prover<F: Field, P: SumCheckPolynomial<F>> {
     g: Vec<P>,  // $g$ a list of polynomial being used in this run of the protocol.

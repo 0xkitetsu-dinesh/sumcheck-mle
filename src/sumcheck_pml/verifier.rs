@@ -1,5 +1,5 @@
 use ark_ff::Field;
-use crate::poly::*;
+use crate::sumcheck_pml::poly::*;
 use polynomial::Polynomial as IPoly;
 /// The state of the Verifier.
 pub struct Verifier<F: Field, P: SumCheckPolynomial<F>> {

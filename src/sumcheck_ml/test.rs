@@ -1,22 +1,13 @@
+use ark_ff::{fields::Fp64,fields::{MontBackend, MontConfig},One, PrimeField,};
+use ark_poly::{multivariate::{self, Term, SparseTerm},DenseMVPolynomial, };
+use ark_std::test_rng;
 
-use ark_ff::{
-	fields::Fp64,
-	fields::{MontBackend, MontConfig},
-	One, PrimeField,
-};
-use ark_std:: test_rng;
-use ark_poly::{
-    multivariate::{self, SparseTerm, Term},
-    DenseMVPolynomial,
-};
-pub mod poly;
-pub mod prover;
-pub mod verifier;
+use crate::sumcheck_ml::prover::*;
+use crate::sumcheck_ml::verifier::*;
 
-use prover::*;
-use verifier::*;
 
-fn main(){
+#[test]
+fn test_normal_poly(){
     #[derive(MontConfig)]
     #[modulus = "97"]
     #[generator = "5"]
